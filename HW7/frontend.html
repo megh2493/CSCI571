@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="utf-8">
+    <title>Basic Bootstrap Template</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="myApp.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular-route.js"></script>
+    <script type="text/javascript"src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-resource.js"></script>
+    <script src="js/myApp.js"></script>
+    <base href="/scripts/bootstrap-3.3.7-dist/frontend.html">
+  </head>
+
+  <script type="text/javascript">
+    var responsiveApp = angular.module("responsiveApp",[]);
+  </script>
+  <body  ng-app="myApp" ng-controller="mainController">
+    <header>
+      <div>
+        <div class="container" style="margin-bottom:0px;">
+          <div class="well" style="margin-bottom:0px;">
+            <form name="mainForm" class="form-inline" ng-submit="submitForm()"  method="post">
+              <label for="text" style="color:#3b5998; margin-right:200px;">FB SEARCH</label>
+              <input type="text" class="form-control" ng-model="search.keyword" style="width:400px;" placeholder="Search" required>
+              <button type="submit" class="btn btn-custom " style="margin-left:-2.5px;"><span class="glyphicon glyphicon-search" ></span></button>
+              <button type="button" class="btn btn-custom2 " style="margin-left:35px;" ng-click="mainController.clearAll()">CLEAR</button>
+            </form>
+          </div>
+        </div>
+      </header>
+      <div class="container" style="margin-top:0px;">
+        <ul class="nav nav-tabs nav-justified">
+          <li><a href="#user" data-toggle="tab">Users</a></li>
+          <li><a href="#page" data-toggle="tab">Pages</a></li>
+          <li><a href="#event" data-toggle="tab" >Events</a></li>
+          <li><a href="#place" data-toggle="tab">Places</a></li>
+          <li><a href="#group" data-toggle="tab">Groups</a></li>
+          <li><a href="#fav" data-toggle="tab">Favourites</a></li>
+        </ul>
+
+        <div ng-show='progressbar'>
+          </br>
+          </br>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+          </div>
+        </div>
+
+        <div ng-show='tabledata'>
+          <div class="tab-content" id="tabs">
+            <!-- all actions that need to be performed under the page tab  -->
+            <div class="tab-pane" id="user">
+              <!-- if json data for pages returns empty  -->
+              <div class ="well" ng-show='nousertable'>
+                No Users Were Found
+              </div>
+              <!-- if json data for pages is non empty -->
+              <div class="table-responsive" ng-show='usertable'>
+                <!-- used to display pages table with all contents  -->
+                <table class="table" id="usertable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Profile Photo</th>
+                      <th>Name</th>
+                      <th>Favourites</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat='user in users.data' >
+                      <td></td>
+                      <td><img src= "{{user.picture.url?user.picture.url:user.picture.data.url}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                      <td>{{user['name']}}</td>
+                      <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(user,'users')"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+                      <td><button type="button" ng-click="getDetails(user,'user')" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <ul class="pager">
+                  <li><a href="#" ng-show='previousbutton01' ng-click="getprevioususerset(users.pager.paging.previous?users.pager.paging.previous:users.paging.previous)">Previous</a></li>
+                  <li><a href="#" ng-show='nextbutton01' ng-click="getnextuserset(users.pager.paging.next?users.pager.paging.next:users.paging.next)">Next</a></li>
+                </ul>
+              </div>
+              <!-- used to display the pagedetail on details glyphicon click -->
+              <div class="container" style="margin-:20px;" ng-show='userdetails'>
+              <br>
+              <div class="row">
+                <div class="col-md-10">
+                  <button class="btn btn-default" ng-click="userredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                </div>
+                <div class="col-md-1">
+                  <button type="button" class="btn btn-default" ng-click="updateLocalStorage(currentrow,'users')"><span class="glyphicon glyphicon-star-empty"></span></button>
+                </div>
+                <div class="col-md-1">
+                  <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                    <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                  </button>
+                </div>
+              </div>
+              <br>
+              <br>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <!-- creation of collapsible albums tab -->
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Album
+                        </h4>
+                      </div>
+                      <div class="panel-body">
+
+                        <div ng-show='progressbar01'>
+                          </br>
+                          </br>
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                          </div>
+                        </div>
+
+                        <!-- if page doesnt have any albums -->
+                        <div class="well" ng-show='nouseralbum'>
+                          No Albums Found
+                        </div>
+                        <!-- if page has albums block1(open) -->
+                        <div class="panel-group" ng-show='useralbum'>
+                          <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                            <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#{{'useralbum'+$index}}" onclick="false">{{album['name']}}</a>
+                              </h4>
+                            </div>
+                            <div id="{{'useralbum'+$index}}" class="panel-collapse collapse in">
+                             <div class="panel-body" ng-repeat='image in album.photos'>
+                               <!-- to fetch hd image -->
+                              <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                             </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- block1(close) -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <!--used to display the posts  -->
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          Posts
+                        </h4>
+                      </div>
+                      <div class="panel-body">
+
+                        <div ng-show='progressbar02'>
+                          </br>
+                          </br>
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                          </div>
+                        </div>
+                        <!--when json for posts is empty  -->
+                        <div class="well" ng-show='nouserposts'>
+                          No Posts to Display
+                        </div>
+                        <!-- when json has posts block2(open)-->
+                        <div ng-show="userposts">
+                          <div class="panel panel-default" ng-repeat='post in posts'>
+                            <div class="panel-body">
+                              <div class='row'>
+                                <div class='col-sm-3'>
+                                  <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                </div>
+                                <div class='col-sm-9'>
+                                  {{temp['name']}}
+                                </br>
+                                  {{post['created_time']['date']}}
+                                </div>
+                              </div>
+                              </br>
+                              {{post['message']}}
+                            </div>
+                          </div>
+                        </div>
+                        <!-- block2(close) -->
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- all actions that need to be performed under the page tab  -->
+            <div class="tab-pane" id="page">
+                <!-- if json data for pages returns empty  -->
+                <div class ="well" ng-show='nopagetable'>
+                  No Pages Were Found
+                </div>
+                <!-- if json data for pages is non empty -->
+                <div class="table-responsive" ng-show='pagetable'>
+                  <!-- used to display pages table with all contents  -->
+                  <table class="table" id="pagertable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Profile Photo</th>
+                        <th>Name</th>
+                        <th>Favourites</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat='page in pages.data' >
+                        <td></td>
+                        <td><img src= "{{page.picture.url?page.picture.url:page.picture.data.url}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                        <td>{{page['name']}}</td>
+                        <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(page,'pages')"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+                        <td><button type="button" ng-click="getDetails(page,'pages')" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <ul class="pager">
+                    <li><a href="#" ng-show='previousbutton11' ng-click="getpreviouspageset(pages.pager.paging.previous?pages.pager.paging.previous:pages.paging.previous)">Previous</a></li>
+                    <li><a href="#" ng-show='nextbutton11' ng-click="getnextpageset(pages.pager.paging.next?pages.pager.paging.next:pages.paging.next)">Next</a></li>
+                  </ul>
+                </div>
+                <!-- used to display the pagedetail on details glyphicon click -->
+                <div class="container" style="margin-:20px;" ng-show='pagedetails'>
+                <br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <button class="btn btn-default" ng-click="pageredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default" ng-click="updateLocalStorage(currentrow,'pages')"><span class="glyphicon glyphicon-star-empty"></span></button>
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                      <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                    </button>
+                  </div>
+                </div>
+                <br>
+                <br>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <!-- creation of collapsible albums tab -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Album
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar11'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- if page doesnt have any albums -->
+                          <div class="well" ng-show='nopagealbum'>
+                            No Albums Found
+                          </div>
+                          <!-- if page has albums block1(open) -->
+                          <div class="panel-group" ng-show='pagealbum'>
+                            <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" href="#{{'pagealbum'+$index}}" onclick="false">{{album['name']}}</a>
+                                </h4>
+                              </div>
+                              <div id="{{'pagealbum'+$index}}" class="panel-collapse collapse in">
+                               <div class="panel-body" ng-repeat='image in album.photos'>
+                                 <!-- to fetch hd image -->
+                                <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                               </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block1(close) -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <!--used to display the posts  -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Posts
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar12'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+                          <!--when json for posts is empty  -->
+                          <div class="well" ng-show='nopageposts'>
+                            No Posts to Display
+                          </div>
+                          <!-- when json has posts block2(open)-->
+                          <div ng-show="pageposts">
+                            <div class="panel panel-default" ng-repeat='post in posts'>
+                              <div class="panel-body">
+                                <div class='row'>
+                                  <div class='col-sm-3'>
+                                    <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                  </div>
+                                  <div class='col-sm-9'>
+                                    {{temp['name']}}
+                                  </br>
+                                    {{post['created_time']['date']}}
+                                  </div>
+                                </div>
+                                </br>
+                                {{post['message']}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block2(close) -->
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+
+            <!-- all actions that need to be performed under the event tab  -->
+            <div class="tab-pane" id="event">
+                <!-- if json data for event returns empty  -->
+                <div class ="well" ng-show='noeventtable'>
+                  No events Were Found
+                </div>
+                <!-- if json data for events is non empty -->
+                <div class="table-responsive" ng-show='eventtable'>
+                  <!-- used to display events table with all contents  -->
+                  <table class="table" id="pagertable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Profile Photo</th>
+                        <th>Name</th>
+                        <th>Favourites</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat='event in events.data' >
+                        <td></td>
+                        <td><img src= "{{event.picture.url?event.picture.url:event.picture.data.url}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                        <td>{{event['name']}}</td>
+                        <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(user,'events')"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+                        <td><button type="button" ng-click="getDetails(event,'events')" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <ul class="pager">
+                    <li><a href="#" ng-show='previousbutton21' ng-click="getpreviouseventset(events.pager.paging.previous?events.pager.paging.previous:events.paging.previous)">Previous</a></li>
+                    <li><a href="#" ng-show='nextbutton21' ng-click="getnexteventset(events.pager.paging.next?events.pager.paging.next:events.paging.next)">Next</a></li>
+                  </ul>
+                </div>
+                <!-- used to display the pagedetail on details glyphicon click -->
+                <div class="container" style="margin-:20px;" ng-show='eventdetails'>
+                <br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <button class="btn btn-default" ng-click="eventredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default" ng-click="updateLocalStorage(currentrow,'events')"><span class="glyphicon glyphicon-star-empty"></span></button>
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                      <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                    </button>
+                  </div>
+                </div>
+                <br>
+                <br>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <!-- creation of collapsible albums tab -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Album
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar21'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- if page doesnt have any albums -->
+                          <div class="well" ng-show='noeventalbum'>
+                            No Albums Found
+                          </div>
+                          <!-- if event has albums block1(open) -->
+                          <div class="panel-group" ng-show='eventalbum'>
+                            <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" href="#{{'eventalbum'+$index}}" onclick="false">{{album['name']}}</a>
+                                </h4>
+                              </div>
+                              <div id="{{'eventalbum'+$index}}" class="panel-collapse collapse in">
+                               <div class="panel-body" ng-repeat='image in album.photos'>
+                                 <!-- to fetch hd image -->
+                                <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                               </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block1(close) -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <!--used to display the posts  -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Posts
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar22'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+                          <!--when json for posts is empty  -->
+                          <div class="well" ng-show='noeventposts'>
+                            No Posts to Display
+                          </div>
+                          <!-- when json has posts block2(open)-->
+                          <div ng-show="eventposts">
+                            <div class="panel panel-default" ng-repeat='post in posts'>
+                              <div class="panel-body">
+                                <div class='row'>
+                                  <div class='col-sm-3'>
+                                    <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                  </div>
+                                  <div class='col-sm-9'>
+                                    {{temp['name']}}
+                                  </br>
+                                    {{post['created_time']['date']}}
+                                  </div>
+                                </div>
+                                </br>
+                                {{post['message']}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block2(close) -->
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+
+            <!-- all actions that need to be performed under the place tab  -->
+            <div class="tab-pane" id="place">
+                <!-- if json data for places returns empty  -->
+                <div class ="well" ng-show='noplacetable'>
+                  No Places Were Found
+                </div>
+                <!-- if json data for places is non empty -->
+                <div class="table-responsive" ng-show='placetable'>
+                  <!-- used to display places table with all contents  -->
+                  <table class="table" id="pagertable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Profile Photo</th>
+                        <th>Name</th>
+                        <th>Favourites</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat='place in places.data' >
+                        <td></td>
+                        <td><img src= "{{place.picture.url?place.picture.url:place.picture.data.url}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                        <td>{{place['name']}}</td>
+                        <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(place,'places')"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+                        <td><button type="button" ng-click="getDetails(place,'places')" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <ul class="pager">
+                    <li><a href="#" ng-show='previousbutton31' ng-click="getpreviousplaceset(places.pager.paging.previous?places.pager.paging.previous:places.paging.previous)">Previous</a></li>
+                    <li><a href="#" ng-show='nextbutton31' ng-click="getnextplaceset(places.pager.paging.next?places.pager.paging.next:places.paging.next)">Next</a></li>
+                  </ul>
+                </div>
+                <!-- used to display the place detail on details glyphicon click -->
+                <div class="container" style="margin-:20px;" ng-show='placedetails'>
+                <br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <button class="btn btn-default" ng-click="placeredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default" ng-click="updateLocalStorage(currentrow,'places')"><span class="glyphicon glyphicon-star-empty"></span></button>
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                      <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                    </button>
+                  </div>
+                </div>
+                <br>
+                <br>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <!-- creation of collapsible albums tab -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Album
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar31'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- if page doesnt have any albums -->
+                          <div class="well" ng-show='noplacealbum'>
+                            No Albums Found
+                          </div>
+                          <!-- if page has albums block1(open) -->
+                          <div class="panel-group" ng-show='placealbum'>
+                            <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" href="#{{'placealbum'+$index}}" onclick="false">{{album['name']}}</a>
+                                </h4>
+                              </div>
+                              <div id="{{'placealbum'+$index}}" class="panel-collapse collapse in">
+                               <div class="panel-body" ng-repeat='image in album.photos'>
+                                 <!-- to fetch hd image -->
+                                <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                               </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block1(close) -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <!--used to display the posts  -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Posts
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar32'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+                          <!--when json for posts is empty  -->
+                          <div class="well" ng-show='noplaceposts'>
+                            No Posts to Display
+                          </div>
+                          <!-- when json has posts block2(open)-->
+                          <div ng-show="placeposts">
+                            <div class="panel panel-default" ng-repeat='post in posts'>
+                              <div class="panel-body">
+                                <div class='row'>
+                                  <div class='col-sm-3'>
+                                    <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                  </div>
+                                  <div class='col-sm-9'>
+                                    {{temp['name']}}
+                                  </br>
+                                    {{post['created_time']['date']}}
+                                  </div>
+                                </div>
+                                </br>
+                                {{post['message']}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block2(close) -->
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+
+            <!-- all actions that need to be performed under the page tab  -->
+            <div class="tab-pane" id="group">
+                <!-- if json data for group returns empty  -->
+                <div class ="well" ng-show='nogrouptable'>
+                  No Groups Were Found
+                </div>
+                <!-- if json data for pages is non empty -->
+                <div class="table-responsive" ng-show='grouptable'>
+                  <!-- used to display pages table with all contents  -->
+                  <table class="table" id="pagertable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Profile Photo</th>
+                        <th>Name</th>
+                        <th>Favourites</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat='group in groups.data' >
+                        <td></td>
+                        <td><img src= "{{group.picture.url?group.picture.url:group.picture.data.url}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                        <td>{{group['name']}}</td>
+                        <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(group,'groups')"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+                        <td><button type="button" ng-click="getDetails(group,'groups')" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <ul class="pager">
+                    <li><a href="#" ng-show='previousbutton41' ng-click="getpreviousgroupset(groups.pager.paging.previous?groups.pager.paging.previous:groups.paging.previous)">Previous</a></li>
+                    <li><a href="#" ng-show='nextbutton41' ng-click="getnextgroupset(groups.pager.paging.next?groups.pager.paging.next:groups.paging.next)">Next</a></li>
+                  </ul>
+                </div>
+                <!-- used to display the pagedetail on details glyphicon click -->
+                <div class="container" style="margin-:20px;" ng-show='groupdetails'>
+                <br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <button class="btn btn-default" ng-click="groupredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-default" ng-click="updateLocalStorage(currentrow,'groups')"><span class="glyphicon glyphicon-star-empty"></span></button>
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                      <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                    </button>
+                  </div>
+                </div>
+                <br>
+                <br>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <!-- creation of collapsible albums tab -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Album
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar41'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- if page doesnt have any albums -->
+                          <div class="well" ng-show='nogroupalbum'>
+                            No Albums Found
+                          </div>
+                          <!-- if page has albums block1(open) -->
+                          <div class="panel-group" ng-show='groupalbum'>
+                            <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" href="#{{'groupalbum'+$index}}" onclick="false">{{album['name']}}</a>
+                                </h4>
+                              </div>
+                              <div id="{{'groupalbum'+$index}}" class="panel-collapse collapse in">
+                               <div class="panel-body" ng-repeat='image in album.photos'>
+                                 <!-- to fetch hd image -->
+                                <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                               </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block1(close) -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <!--used to display the posts  -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Posts
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar42'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+                          <!--when json for posts is empty  -->
+                          <div class="well" ng-show='nogroupposts'>
+                            No Posts to Display
+                          </div>
+                          <!-- when json has posts block2(open)-->
+                          <div ng-show="groupposts">
+                            <div class="panel panel-default" ng-repeat='post in posts'>
+                              <div class="panel-body">
+                                <div class='row'>
+                                  <div class='col-sm-3'>
+                                    <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                  </div>
+                                  <div class='col-sm-9'>
+                                    {{temp['name']}}
+                                  </br>
+                                    {{post['created_time']['date']}}
+                                  </div>
+                                </div>
+                                </br>
+                                {{post['message']}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block2(close) -->
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- all actions that need to be performed under the page tab  -->
+            <div class="tab-pane" id="fav">
+                <!-- if json data for group returns empty  -->
+                <div class ="well" ng-show='nofavtable'>
+                  No favourites Were Found
+                </div>
+                <!-- if json data for pages is non empty -->
+                <div class="table-responsive" ng-show='favtable'>
+                  <!-- used to display pages table with all contents  -->
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Profile Photo</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Delete</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat='fav in favourites' >
+                        <td></td>
+                        <td><img src= "{{fav['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+                        <td>{{fav['name']}}</td>
+                        <td>{{fav['typedata']}}</td>
+                        <td><button type="button" class="btn btn-default" ng-click="updateLocalStorage(fav,fav['typedata'])"><span class="glyphicon glyphicon-trash"></span></button></td>
+                        <td><button type="button" ng-click="getDetails(fav,fav['typedata'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- used to display the pagedetail on details glyphicon click -->
+                <div class="container" style="margin-:20px;" ng-show='favdetails'>
+                <br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <button class="btn btn-default" ng-click="favredirect()"><i class="glyphicon glyphicon-chevron-left"></i>Back</button>
+                  </div>
+                  <div class="col-md-1">
+                    <button class="btn btn-default" ng-click="popup(users.picture.url?users.picture.url:users.picture.data.url,users.name)">
+                      <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" width="20" />
+                    </button>
+                  </div>
+                </div>
+                <br>
+                <br>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <!-- creation of collapsible albums tab -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Album
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar51'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+
+                          <!-- if page doesnt have any albums -->
+                          <div class="well" ng-show='nofavalbum'>
+                            No Albums Found
+                          </div>
+                          <!-- if page has albums block1(open) -->
+                          <div class="panel-group" ng-show='favalbum'>
+                            <div class="panel panel-default" ng-repeat='album in temp.albums'>
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" href="#{{'favalbum'+$index}}" onclick="false">{{album['name']}}</a>
+                                </h4>
+                              </div>
+                              <div id="{{'favalbum'+$index}}" class="panel-collapse collapse in">
+                               <div class="panel-body" ng-repeat='image in album.photos'>
+                                 <!-- to fetch hd image -->
+                                <img ng-src="https://graph.facebook.com/v2.8/{{image.id}}/picture?type(large)&access_token=EAABbEqHnnuwBALrluaZCrOhgJZCjV5DfcJLrmrbaczS4BBEzAUUOaHjxHvoZAZAPOcF2tazFqADaEMZAmRt5tYxmRiqSawCxC8eEZCSBRw7i94nYk5GgqSURjLPuMmZCaUFOYFl5d5TET1Vg8bGKK5w"  alt='profilepicture' style="width:70%;">
+                               </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block1(close) -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <!--used to display the posts  -->
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            Posts
+                          </h4>
+                        </div>
+                        <div class="panel-body">
+
+                          <div ng-show='progressbar52'>
+                            </br>
+                            </br>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%"></div>
+                            </div>
+                          </div>
+                          <!--when json for posts is empty  -->
+                          <div class="well" ng-show='nofavposts'>
+                            No Posts to Display
+                          </div>
+                          <!-- when json has posts block2(open)-->
+                          <div ng-show="favposts">
+                            <div class="panel panel-default" ng-repeat='post in posts'>
+                              <div class="panel-body">
+                                <div class='row'>
+                                  <div class='col-sm-3'>
+                                    <img src= "{{temp.picture.url}}"  alt='profilepicture' style='height:30px; width:40px;'>
+                                  </div>
+                                  <div class='col-sm-9'>
+                                    {{temp['name']}}
+                                  </br>
+                                    {{post['created_time']['date']}}
+                                  </div>
+                                </div>
+                                </br>
+                                {{post['message']}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- block2(close) -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

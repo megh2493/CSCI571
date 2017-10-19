@@ -1,0 +1,146 @@
+<div class="tab-content" id="tabs">
+  <div class="tab-pane" id="user">
+    <div class="table-responsive">
+      <table class="table" id="userTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Profile Photo</th>
+            <th>Name</th>
+            <th>Favourites</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat='user in users' >
+            <td></td>
+            <td><img src= "{{user['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+            <td>{{user['name']}}</td>
+            <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+            <td><button type="button" ng-click="getDetails(user['id'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="page">
+      <div class="table-responsive">
+        <table class="table" id="pagertable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favourites</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat='page in pages' >
+              <td></td>
+              <td><img src= "{{page['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+              <td>{{page['name']}}</td>
+              <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+              <td><button type="button" ng-click="getDetails(page['id'])" class="btn btn-default"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div> 
+    </div>
+    <div class="tab-pane" id="event">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favourites</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat='event in events' >
+              <td></td>
+              <td><img src= "{{event['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+              <td>{{event['name']}}</td>
+              <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+              <td><button type="button" ng-click="getDetails(event['id'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="place">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favourites</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat='place in places' >
+              <td></td>
+              <td><img src= "{{place['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+              <td>{{place['name']}}</td>
+              <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+              <td><button type="button" ng-click="getDetails(place['id'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="group">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favourites</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat='group in groups' >
+              <td></td>
+              <td><img src= "{{group['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+              <td>{{group['name']}}</td>
+              <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+              <td><button type="button" ng-click="getDetails(group['id'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab-pane" id="fav">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favourites</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat='user in users' >
+              <td></td>
+              <td><img src= "{{user['picture']['url']}}"  alt='profilepicture' style='height:30px; width:40px;'></td>
+              <td>{{user['name']}}</td>
+              <td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-star-empty"></span></button></td>
+              <td><button type="button" ng-click="getDetails(user['id'])" class="btn btn-default"><span  class="glyphicon glyphicon-chevron-right"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,52 @@
+  .well {
+  overflow: hidden;
+  margin-top: 30px;
+  }
+  .well div {
+    float: left;
+    width: 33.33333333%;
+  }
+  .btn-custom {
+    background-color: #3b5998;
+    border-color: #3b5998;
+    color: white;
+    width:60px;
+  }
+  .btn-custom:hover {
+    background-color: white;
+    border-color: white;
+    color: #3b5998;
+  }
+  .btn-custom2 {
+    background-color: white;
+    border-color: #3b5998;
+    color: #3b5998;
+    width:90px;
+  }
+  .btn-custom2:hover {
+    background-color: #3b5998;
+    border-color: #3b5998;
+    color: white;
+  }
+  .nav-tabs{
+    background-color: white;
+    border-color: #3b5998;
+    color: #3b5998;
+  }
+  .nav-tabs > li > a:hover{
+    background-color: #3b5998 !important;
+    border: medium none;
+    border-radius: 0;
+    color:white;
+  }
+  tr:nth-child(1) {
+    counter-reset: rowNumber;
+  }
+  table tr {
+    counter-increment: rowNumber;
+  }
+  table tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+  }
