@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <style>
+    div.MainCenter
+    {
+      width:700px;
+      margin-left: 500px;
+      margin-right: auto;
+      margin-top: 100px;
+      padding: 0px;
+      position:absolute;
+      background-color:white;
+    }
+    h2
+    {
+      position: relative;
+      margin-left:40px;
+    }
+    input
+    {
+      position: relative;
+      margin-left:130px;
+    }
+  </style>
+  <body>
+    <table id ="arlinelisttable"></table>
+    <div id="table"></div>
+    <div class="MainCenter">
+      <h2>Enter URL for Airlines List XML file</h2>
+      <form action="javascript:;" onsubmit="return passxmlfile(xml);">
+        <input type="text" name="xml" style="width:200px;"><br>
+        <input type="submit" name="Submit" value="Submit" style="margin-left:200px; margin-top:10px;" >
+      </form>
+    </div>
+  </body>
+  <script type="text/javascript">
+  function passxmlfile(xml){
+    var url =xml.value;
+    var xmlDoc;
+
+    if (window.XMLHttpRequest){
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      console.log("Xhttp request already exists");
+      xmlhttp=new XMLHttpRequest();
+    } else {
+      // code for IE6, IE5
+      console.log("Xhttp request must be created");
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    try{
+      xmlhttp.open("GET",url,false); //open, send, responseXML are
+      xmlhttp.send(); //properties of XMLHTTPRequest
+    }
+    catch(err){
+      console.log(err.message);
+      alert("XML File Not Found"); // error if run locally
+      return;
+    }
+    if(xmlhttp.status == 404){
+      alert("XML File Not Found"); // error if run in server
+      return;
+    }
+    xmlDoc=xmlhttp.responseXML;
+
+    if (xmlDoc == null){
+      alert("Error in XML File "); // validation if xml file is valid or invalid
+      return;
+    }
+   generateXmlFile(xmlDoc);
+  }
+
+  function generateXmlFile(xmlDoc){
+    var haccess = xmlDoc.children[0].children[0].children[0]; //header access
+    var hlength = haccess.children.length; //total number of headers
+    var headerarray = []; //array with list of headers
+    for (var i = 0; i < hlength; i++){
+      headerarray[i] = haccess.children[i].innerHTML;
+    }
+
+    var raccess = xmlDoc.getElementsByTagName('Row'); //row access
+    var rlength = raccess.length;
+    if (rlength == 0){
+      alert("XML File Does Not Contain Any Airline Companies")
+      return 0;
+    }
+    var rarray = [];
+    for (var i = 0; i < rlength; i++){
+      var carray = []; //colomn array for each row
+      for (var j = 0; j < hlength; j++){
+        carray[j] = xmlDoc.getElementsByTagName('Row')[i].children[j].innerHTML;
+      }
+      rarray.push(carray); // an array within an array
+    }
+    var table ="<table border=2>" + "<tr></tr>"; //header row
+    for (var i = 0; i < hlength; i++){
+      table += "<th>"+headerarray[i]+"</th>"; // header elements
+    }
+    for (var i = 0; i < rlength; i++){
+      var colomn = rarray[i];
+      var values = colomn[2].split('\n');
+      var list ="<ul>"
+      var count = 1;
+      for (var j = 0; j < values.length; j++){
+        if (values[j] != 0){
+          if (count == 1){
+              list+="<li><b>"+values[j]+"</b></li>";
+              count++;
+          }else{
+              list+="<li>"+values[j]+"</li>";
+          }
+        }
+      }
+      list+="</ul>";
+
+      table += "<tr><td>"+colomn[0]+"</td>"+
+              "<td>"+colomn[1]+"</td>"+
+              "<td>"+list+"</td>"+
+              "<td>"+colomn[3]+"</td>"+
+              "<td><a href=\"" + colomn[4] + "\">"+colomn[4]+"</a></td>"+
+              "<td><img style='height:150px;width: 300px;' src=\"" + colomn[5] + "\">"+"</img></td></tr>";
+    }
+    table += "</table>";
+    var newWindow = window.open("", "", "fullscreen=yes"); //open file in new window
+    newWindow.document.write(table);
+  }
+  </script>
+</html>
